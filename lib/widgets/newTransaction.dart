@@ -25,6 +25,8 @@ class _NewTransactionState extends State<NewTransaction> {
       enteredTitle,
       enteredAmount,
     );
+
+    Navigator.of(context).pop();
   }
 
   @override
@@ -48,7 +50,7 @@ class _NewTransactionState extends State<NewTransaction> {
             ),
             FlatButton(
               onPressed: submitData,
-              textColor: Colors.purple,
+              textColor: Theme.of(context).primaryColor,
               child: Text('Add transaction'),
             )
           ],
