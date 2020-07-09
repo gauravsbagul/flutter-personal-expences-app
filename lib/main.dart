@@ -56,7 +56,7 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   final List<Transaction> _userTransactions = [
     Transaction(
       id: 't1',
@@ -72,7 +72,24 @@ class _MyHomePageState extends State<MyHomePage> {
     )
   ];
 
-  bool showChart = false;
+  bool _showChart = false;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print('didChangeAppLifecycleState state = $state');
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
   List<Transaction> get _recentTransaction {
     return _userTransactions.where((tx) {
@@ -113,6 +130,53 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _userTransactions.retainWhere((tx) => tx.id != id);
     });
+  }
+
+  List<Widget> _buildLandcapeContent(
+      MediaQueryData mediaQuery, appBar, Widget txListWidget) {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            'Show chart',
+            style: Theme.of(context).textTheme.headline6,
+          ),
+          Switch.adaptive(
+            activeColor: Theme.of(context).accentColor,
+            value: _showChart,
+            onChanged: (value) {
+              setState(() {
+                _showChart = value;
+              });
+            },
+          ),
+        ],
+      ),
+      _showChart
+          ? Container(
+              height: (mediaQuery.size.height -
+                      appBar.preferredSize.height -
+                      mediaQuery.padding.top) *
+                  0.6,
+              child: Chart(_recentTransaction),
+            )
+          : txListWidget,
+    ];
+  }
+
+  List<Widget> _buildPotratitContent(
+      MediaQueryData mediaQuery, appBar, Widget txListWidget) {
+    return [
+      Container(
+        height: (mediaQuery.size.height -
+                appBar.preferredSize.height -
+                mediaQuery.padding.top) *
+            0.3,
+        child: Chart(_recentTransaction),
+      ),
+      txListWidget
+    ];
   }
 
   @override
@@ -171,43 +235,9 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             if (_isLandscape)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    'Show chart',
-                    style: Theme.of(context).textTheme.headline6,
-                  ),
-                  Switch.adaptive(
-                    activeColor: Theme.of(context).accentColor,
-                    value: showChart,
-                    onChanged: (value) {
-                      setState(() {
-                        showChart = value;
-                      });
-                    },
-                  ),
-                ],
-              ),
+              ..._buildLandcapeContent(mediaQuery, appBar, txListWidget),
             if (!_isLandscape)
-              Container(
-                height: (mediaQuery.size.height -
-                        appBar.preferredSize.height -
-                        mediaQuery.padding.top) *
-                    0.3,
-                child: Chart(_recentTransaction),
-              ),
-            if (!_isLandscape) txListWidget,
-            if (_isLandscape)
-              showChart
-                  ? Container(
-                      height: (mediaQuery.size.height -
-                              appBar.preferredSize.height -
-                              mediaQuery.padding.top) *
-                          0.6,
-                      child: Chart(_recentTransaction),
-                    )
-                  : txListWidget,
+              ..._buildPotratitContent(mediaQuery, appBar, txListWidget),
           ],
         ),
       ),
