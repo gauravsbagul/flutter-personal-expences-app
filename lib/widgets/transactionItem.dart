@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:personal_expences_app/modals/transaction.dart';
+import 'package:personal_expences_app/models/transaction.dart';
 
 class TransactionItem extends StatefulWidget {
   const TransactionItem({

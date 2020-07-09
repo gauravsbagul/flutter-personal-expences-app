@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'widgets/newTransaction.dart';
-import 'modals/transaction.dart';
+import 'models/transaction.dart';
 import 'widgets/chart.dart';
 import 'widgets/transactionList.dart';
 

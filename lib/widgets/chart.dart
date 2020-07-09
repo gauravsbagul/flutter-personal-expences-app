@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../modals/transaction.dart';
+import '../models/transaction.dart';
 import 'package:intl/intl.dart';
 
 import 'chartbar.dart';
