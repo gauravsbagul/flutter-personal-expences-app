@@ -1,5 +1,11 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
+import 'adaptiveWidgets/AdaptiveInputField.dart';
+import 'adaptiveWidgets/adaptiveButton.dart';
 
 class NewTransaction extends StatefulWidget {
   final Function addTx;
@@ -58,16 +64,13 @@ class _NewTransactionState extends State<NewTransaction> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
-              TextField(
-                decoration: InputDecoration(labelText: 'Title'),
-                controller: _titleController,
-              ),
-              TextField(
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
-                decoration: InputDecoration(labelText: 'Amount'),
-                controller: _amountController,
-                onSubmitted: (_) => _submitData,
-              ),
+              AdaptiveInputField(
+                  placeholder: 'Title', controller: _titleController),
+              Platform.isIOS ? SizedBox(height: 20) : Container(),
+              AdaptiveInputField(
+                  placeholder: 'Amount',
+                  controller: _amountController,
+                  handler: _submitData),
               Container(
                 height: 70,
                 child: Row(
@@ -79,14 +82,7 @@ class _NewTransactionState extends State<NewTransaction> {
                             : 'Picked date: ${DateFormat.yMd().format(_selectedDate)}',
                       ),
                     ),
-                    FlatButton(
-                      onPressed: _percentDatePicker,
-                      textColor: Theme.of(context).primaryColor,
-                      child: Text(
-                        'Choose date',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    )
+                    AdaptiveButton('Choose date', _percentDatePicker)
                   ],
                 ),
               ),
